@@ -96,16 +96,24 @@ export default function SampleForm({ onAddSample, onCancel }) {
       return;
     }
 
-    // Construct entity object
+    // Construct entity object with complete B2B export dossier coordinates
     const newSample = {
       id: `SMPL-${Date.now().toString().slice(-4)}`,
       buyerName: formData.buyerName.trim(),
       companyName: formData.companyName.trim(),
+      email: `${formData.buyerName.trim().toLowerCase().replace(/\s+/g, '.')}@${formData.companyName.trim().toLowerCase().replace(/[^a-z0-9]/g, '')}.com`,
+      phone: '+62 812-3456-7890',
       country: formData.country.trim(),
+      city: 'Destination City',
+      postalCode: '10001',
       shippingAddress: formData.shippingAddress.trim(),
+      courierService: 'DHL Express International',
+      trackingAwb: `DHL-${Date.now().toString().slice(-6)}-ID`,
       commodity: formData.commodity,
       grade: formData.grade,
       sampleWeight: formData.sampleWeight,
+      packagingType: 'Vacuum-Sealed Foil Bag + Outer Rigid Export Box',
+      dispatchNotes: 'Permintaan sampel baru dicatat. Menunggu verifikasi tim logistik dan penerbitan COA.',
       requestDate: new Date().toISOString().split('T')[0],
       status: 'Pending Review',
     };

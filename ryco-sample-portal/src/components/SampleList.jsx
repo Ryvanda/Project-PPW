@@ -4,10 +4,15 @@ import SampleCard from './SampleCard';
 /**
  * SampleList Component
  * Renders sample requests in a full-width responsive grid with
- * multi-attribute search and category filters.
- * @param {{ samples: Array, onDelete: Function, onToggleStatus: Function }} props
+ * multi-attribute search, category filters, and dossier detail handler.
+ * @param {{
+ *   samples: Array,
+ *   onDelete: Function,
+ *   onToggleStatus: Function,
+ *   onSelectSample: Function
+ * }} props
  */
-export default function SampleList({ samples, onDelete, onToggleStatus }) {
+export default function SampleList({ samples, onDelete, onToggleStatus, onSelectSample }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [commodityFilter, setCommodityFilter] = useState('ALL');
   const [statusFilter, setStatusFilter] = useState('ALL');
@@ -118,6 +123,7 @@ export default function SampleList({ samples, onDelete, onToggleStatus }) {
               sample={sample}
               onDelete={onDelete}
               onToggleStatus={onToggleStatus}
+              onSelectSample={onSelectSample}
             />
           ))}
         </div>

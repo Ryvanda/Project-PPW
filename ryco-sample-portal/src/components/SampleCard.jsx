@@ -3,10 +3,17 @@ import React from 'react';
 /**
  * SampleCard Component
  * Displays upgraded B2B international shipping coordinates,
- * distinct commodity & grade chips, highlighted address block, and actions.
- * @param {{ sample: Object, onDelete: Function, onToggleStatus: Function }} props
+ * standardized commodity & grade chips, highlighted address block,
+ * explicit "Lihat Detail Dossier" action, and status controls.
+ *
+ * @param {{
+ *   sample: Object,
+ *   onDelete: Function,
+ *   onToggleStatus: Function,
+ *   onSelectSample: Function
+ * }} props
  */
-export default function SampleCard({ sample, onDelete, onToggleStatus }) {
+export default function SampleCard({ sample, onDelete, onToggleStatus, onSelectSample }) {
   const {
     id,
     buyerName,
@@ -46,8 +53,21 @@ export default function SampleCard({ sample, onDelete, onToggleStatus }) {
     );
   };
 
+  const handleCardClick = (e) => {
+    // If the click is inside a button, do nothing (event handlers on buttons stop propagation)
+    if (onSelectSample) {
+      onSelectSample(sample);
+    }
+  };
+
   return (
-    <article className="sample-card-modern" id={`card-${id}`} aria-label={`Sample request ${id}`}>
+    <article 
+      className="sample-card-modern" 
+      id={`card-${id}`} 
+      aria-label={`Sample request ${id}`}
+      onClick={handleCardClick}
+      style={{ cursor: 'pointer' }}
+    >
       {/* Top Meta Bar */}
       <div className="card-top-bar">
         <div className="id-and-country">
@@ -57,12 +77,35 @@ export default function SampleCard({ sample, onDelete, onToggleStatus }) {
             {country}
           </span>
         </div>
-        <div>{getStatusBadge()}</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          {getStatusBadge()}
+        </div>
       </div>
 
       {/* Company & Buyer Details */}
       <div className="card-partner-block">
-        <h3 className="company-title">{companyName}</h3>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem' }}>
+          <h3 
+            className="company-title" 
+            title="Klik untuk melihat Detail Dossier"
+            style={{ color: 'var(--forest-dark)' }}
+          >
+            {companyName}
+          </h3>
+          <button
+            type="button"
+            className="btn-dossier-open"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (onSelectSample) onSelectSample(sample);
+            }}
+            id={`dossier-btn-${id}`}
+            title="Buka Lembar Detail Dossier"
+          >
+            <i className="bi bi-file-earmark-medical"></i>
+            <span>Detail Dossier</span>
+          </button>
+        </div>
         <p className="buyer-contact">
           <i className="bi bi-person-circle"></i>
           <span>PIC: <strong>{buyerName}</strong></span>
@@ -75,7 +118,7 @@ export default function SampleCard({ sample, onDelete, onToggleStatus }) {
           <i className="bi bi-flower1"></i>
           <span>{commodity}</span>
         </div>
-        <div className="spec-chip spec-chip--grade" title="Grade Mutu Ekspor">
+        <div className="spec-chip spec-chip--grade" title="Grade Mutu Ekspor (Standardized)">
           <i className="bi bi-award-fill"></i>
           <span>{grade}</span>
         </div>
@@ -105,18 +148,24 @@ export default function SampleCard({ sample, onDelete, onToggleStatus }) {
           <button
             type="button"
             className="btn-status-toggle"
-            onClick={() => onToggleStatus(id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleStatus(id);
+            }}
             title="Siklus status: Pending -> Shipped -> Delivered"
             id={`toggle-${id}`}
           >
             <i className="bi bi-arrow-repeat"></i>
-            Ubah Status Pengiriman
+            Ubah Status
           </button>
 
           <button
             type="button"
             className="btn-delete-item"
-            onClick={() => onDelete(id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(id);
+            }}
             title="Hapus data permintaan ini"
             id={`delete-${id}`}
           >

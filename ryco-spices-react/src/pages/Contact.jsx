@@ -2,6 +2,37 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import ToastNotification from '../components/ToastNotification';
 
+// Spice Commodity Taxonomy & Dependent Quality Grades
+export const COMMODITY_GRADES = {
+  'Vanilla Beans': [
+    'Grade A (Gourmet / Black Premium)',
+    'Grade B (Extraction Grade)'
+  ],
+  'Nutmeg': [
+    'Grade A (Premium Whole)',
+    'Grade B (Standard Whole)',
+    'Grade FAQ (Market Quality)'
+  ],
+  'Cinnamon / Cassia': [
+    'Grade A (Vera Sticks)',
+    'Grade B (Standard Cuts)',
+    'Grade FAQ (Ground / Broken)'
+  ],
+  'Cloves': [
+    'Lalpari (Hand-Picked)',
+    'Zanzibar Grade A',
+    'Standard FAQ'
+  ],
+  'Fresh & Dried Ginger': [
+    'Grade A (Split Peeled)',
+    'Grade B (Whole Sun-Dried)'
+  ],
+  'Black & White Pepper': [
+    'Grade 1 (550-570 g/l High Density)',
+    'Grade FAQ (Cleaned)'
+  ]
+};
+
 export default function Contact() {
   const [formData, setFormData] = useState({
     buyerName: '',
@@ -10,7 +41,8 @@ export default function Contact() {
     email: '',
     phone: '',
     productInterest: '',
-    sampleWeight: '500g Standard Evaluation Kit',
+    targetGrade: '',
+    sampleWeight: '500g Standard Evaluation Kit (Single Variety with COA)',
     deliveryAddress: '',
     message: ''
   });
@@ -18,6 +50,7 @@ export default function Contact() {
   const [validated, setValidated] = useState(false);
   const [activeFaq, setActiveFaq] = useState(0); // 0th opened by default
   const [toast, setToast] = useState({ show: false, title: '', message: '', type: 'success' });
+  const [confirmationModal, setConfirmationModal] = useState({ show: false, data: null });
 
   const faqs = [
     {
@@ -26,7 +59,7 @@ export default function Contact() {
     },
     {
       q: 'Can I request physical samples before placing a commercial contract?',
-      a: 'Yes, absolutely. We actively encourage sample evaluations for verified business buyers. We dispatch 500g representative sample boxes complete with certificate of analysis (COA) specifying moisture, volatile oil content, and origin coordinates. Samples are complimentary for qualified wholesale buyers; buyer covers express courier delivery (DHL or FedEx).'
+      a: 'Yes, absolutely. We actively encourage sample evaluations for verified business buyers. We dispatch 250g micro-sample kits or 500g representative sample boxes complete with certificate of analysis (COA) specifying moisture, volatile oil content, and origin coordinates. Samples are complimentary for qualified wholesale buyers; buyer covers express courier delivery (DHL or FedEx).'
     },
     {
       q: 'What export documentation and certificates do you supply?',
@@ -50,6 +83,17 @@ export default function Contact() {
     }));
   };
 
+  // Handle dependent Commodity selection change
+  const handleProductChange = (e) => {
+    const selectedProduct = e.target.value;
+    const availableGrades = COMMODITY_GRADES[selectedProduct] || [];
+    setFormData((prev) => ({
+      ...prev,
+      productInterest: selectedProduct,
+      targetGrade: availableGrades.length > 0 ? availableGrades[0] : ''
+    }));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setValidated(true);
@@ -60,24 +104,33 @@ export default function Contact() {
       !formData.country.trim() ||
       !formData.email.trim() ||
       !formData.productInterest ||
+      !formData.targetGrade ||
       !formData.deliveryAddress.trim() ||
       !formData.message.trim()
     ) {
       setToast({
         show: true,
         title: 'Required Fields Missing',
-        message: 'Please complete all required fields (indicated by *) before submitting your inquiry.',
+        message: 'Please complete all required fields (indicated by *) including commodity and target grade before submitting your inquiry.',
         type: 'danger'
       });
       return;
     }
 
-    // Success response
+    const submissionData = { ...formData };
+
+    // Success response: Toast feedback with targetGrade
     setToast({
       show: true,
       title: 'Inquiry & Sample Request Received',
-      message: `Thank you, ${formData.buyerName}. Your inquiry for ${formData.productInterest} has been routed to our Jakarta export desk. We will send quotes and courier tracking coordinates to ${formData.email} within 24 business hours.`,
+      message: `Thank you, ${submissionData.buyerName}. Your inquiry for ${submissionData.productInterest} [${submissionData.targetGrade}] has been routed to our Jakarta export desk. We will send quotes and courier tracking coordinates to ${submissionData.email} within 24 business hours.`,
       type: 'success'
+    });
+
+    // Open detailed Confirmation Modal
+    setConfirmationModal({
+      show: true,
+      data: submissionData
     });
 
     // Reset form
@@ -88,7 +141,8 @@ export default function Contact() {
       email: '',
       phone: '',
       productInterest: '',
-      sampleWeight: '500g Standard Evaluation Kit',
+      targetGrade: '',
+      sampleWeight: '500g Standard Evaluation Kit (Single Variety with COA)',
       deliveryAddress: '',
       message: ''
     });
@@ -108,6 +162,117 @@ export default function Contact() {
         type={toast.type}
         onClose={() => setToast({ ...toast, show: false })}
       />
+
+      {/* ===== CONFIRMATION MODAL ===== */}
+      {confirmationModal.show && confirmationModal.data && (
+        <div 
+          className="modal fade show d-block" 
+          tabIndex="-1" 
+          style={{ backgroundColor: 'rgba(15, 23, 42, 0.7)', zIndex: 1060 }}
+          role="dialog"
+          aria-labelledby="confirmModalLabel"
+          aria-modal="true"
+        >
+          <div className="modal-dialog modal-dialog-centered modal-lg">
+            <div className="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+              <div className="modal-header bg-dark text-white px-4 py-3 border-0">
+                <div className="d-flex align-items-center gap-2">
+                  <i className="bi bi-patch-check-fill text-primary fs-4"></i>
+                  <div>
+                    <h5 className="modal-title font-serif text-white mb-0" id="confirmModalLabel">
+                      B2B Sample Request &amp; Inquiry Registered
+                    </h5>
+                    <small className="text-white-50">Ticket Code: RYCO-{Date.now().toString().slice(-6)} · Jakarta Export Desk</small>
+                  </div>
+                </div>
+                <button 
+                  type="button" 
+                  className="btn-close btn-close-white" 
+                  aria-label="Close"
+                  onClick={() => setConfirmationModal({ show: false, data: null })}
+                ></button>
+              </div>
+
+              <div className="modal-body p-4 bg-light">
+                <div className="alert alert-success d-flex align-items-center mb-4 rounded-3 border-0 shadow-sm" role="alert">
+                  <i className="bi bi-check-circle-fill fs-4 me-3 text-success"></i>
+                  <div>
+                    <strong>Inquiry &amp; Evaluation Kit Dispatch Logged Successfully!</strong>
+                    <div className="small">Our logistics officer is preparing courier paperwork and Certificate of Analysis.</div>
+                  </div>
+                </div>
+
+                <div className="row g-3">
+                  <div className="col-md-6">
+                    <div className="card h-100 border-0 shadow-sm p-3 rounded-3 bg-white">
+                      <h6 className="text-uppercase text-secondary small fw-bold mb-3 border-bottom pb-2">
+                        <i className="bi bi-person-badge me-1 text-primary"></i> Buyer &amp; Corporate Profile
+                      </h6>
+                      <p className="mb-1"><strong>PIC Name:</strong> {confirmationModal.data.buyerName}</p>
+                      <p className="mb-1"><strong>Company:</strong> {confirmationModal.data.companyName}</p>
+                      <p className="mb-1"><strong>Business Email:</strong> {confirmationModal.data.email}</p>
+                      <p className="mb-1"><strong>WhatsApp / Phone:</strong> {confirmationModal.data.phone || 'Not specified'}</p>
+                      <p className="mb-0"><strong>Destination:</strong> {confirmationModal.data.country}</p>
+                    </div>
+                  </div>
+
+                  <div className="col-md-6">
+                    <div className="card h-100 border-0 shadow-sm p-3 rounded-3 bg-white">
+                      <h6 className="text-uppercase text-secondary small fw-bold mb-3 border-bottom pb-2">
+                        <i className="bi bi-box-seam me-1 text-primary"></i> Sample Specification
+                      </h6>
+                      <p className="mb-1"><strong>Commodity:</strong> <span className="badge bg-primary-subtle text-primary border border-primary-subtle">{confirmationModal.data.productInterest}</span></p>
+                      <p className="mb-1"><strong>Selected Grade:</strong> <span className="badge bg-success-subtle text-success border border-success-subtle fw-bold">{confirmationModal.data.targetGrade}</span></p>
+                      <p className="mb-1"><strong>Sample Weight:</strong> {confirmationModal.data.sampleWeight}</p>
+                      <p className="mb-0"><strong>Lead Time:</strong> 24 business hours for AWB &amp; quotation</p>
+                    </div>
+                  </div>
+
+                  <div className="col-12">
+                    <div className="card border-0 shadow-sm p-3 rounded-3 bg-white">
+                      <h6 className="text-uppercase text-secondary small fw-bold mb-2">
+                        <i className="bi bi-geo-alt-fill me-1 text-primary"></i> Courier Delivery Destination
+                      </h6>
+                      <p className="text-muted small mb-0 font-monospace bg-light p-2 rounded border">
+                        {confirmationModal.data.deliveryAddress}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="col-12">
+                    <div className="card border-0 shadow-sm p-3 rounded-3 bg-white">
+                      <h6 className="text-uppercase text-secondary small fw-bold mb-2">
+                        <i className="bi bi-chat-left-text me-1 text-primary"></i> Inquiry Details &amp; Target Specifications
+                      </h6>
+                      <p className="text-muted small mb-0 font-monospace bg-light p-2 rounded border">
+                        {confirmationModal.data.message}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="modal-footer bg-white px-4 py-3 border-top">
+                <button 
+                  type="button" 
+                  className="btn btn-outline-secondary px-4 rounded-pill" 
+                  onClick={() => setConfirmationModal({ show: false, data: null })}
+                >
+                  Close Confirmation
+                </button>
+                <a 
+                  href="https://wa.me/6287776862445" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="btn btn-primary px-4 rounded-pill"
+                >
+                  <i className="bi bi-whatsapp me-1"></i> Expedite via WhatsApp
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ===== PAGE HERO ===== */}
       <section className="page-hero" id="contact-hero">
@@ -249,7 +414,7 @@ export default function Contact() {
               </div>
               <div className="process-step__content">
                 <h4>Sample Evaluation</h4>
-                <p>We dispatch a 500g physical sample package with lab COA so you can verify quality before contract signing.</p>
+                <p>We dispatch a 250g or 500g physical sample package with lab COA so you can verify quality before contract signing.</p>
               </div>
             </div>
 
@@ -412,32 +577,54 @@ export default function Contact() {
                       />
                     </div>
 
-                    {/* Product Interest */}
+                    {/* Commodity Selection */}
                     <div className="col-md-6">
                       <label htmlFor="productInterest" className="form-label">
-                        Primary Product Interest <span className="text-danger">*</span>
+                        Commodity / Spice Variety <span className="text-danger">*</span>
                       </label>
                       <select 
                         className={`form-select ${validated && !formData.productInterest ? 'is-invalid' : ''}`}
                         id="productInterest" 
                         name="productInterest" 
                         value={formData.productInterest}
-                        onChange={handleChange}
+                        onChange={handleProductChange}
                         required
                       >
-                        <option value="">Select product variety...</option>
-                        <option value="Indonesian Nutmeg Whole">Indonesian Nutmeg Whole (ABCD / Sound B / FAQ)</option>
-                        <option value="Mace (Bunga Pala)">Mace (Bunga Pala - Hand-Picked / Broken)</option>
-                        <option value="Cloves (Cengkeh)">Cloves (Cengkeh - Lalpari Grade 1 / FAQ)</option>
-                        <option value="Cinnamon (Kayu Manis)">Cinnamon (Cassia Vera AA Sticks / Broken)</option>
-                        <option value="Multiple Spices">Multiple Commodities / Mixed Container</option>
-                        <option value="Custom Sourcing">Custom Sourcing &amp; Specific Cut Sizes</option>
+                        <option value="">Select commodity variety...</option>
+                        {Object.keys(COMMODITY_GRADES).map((item) => (
+                          <option key={item} value={item}>{item}</option>
+                        ))}
                       </select>
-                      <div className="invalid-feedback">Please select a product interest.</div>
+                      <div className="invalid-feedback">Please select a spice commodity.</div>
                     </div>
 
-                    {/* Sample Weight / Evaluation Kit */}
-                    <div className="col-md-12">
+                    {/* Target Grade Selection (Dependent Dropdown) */}
+                    <div className="col-md-6">
+                      <label htmlFor="targetGrade" className="form-label">
+                        Target Quality Grade <span className="text-danger">*</span>
+                      </label>
+                      <select 
+                        className={`form-select ${validated && !formData.targetGrade ? 'is-invalid' : ''}`}
+                        id="targetGrade" 
+                        name="targetGrade" 
+                        value={formData.targetGrade}
+                        onChange={handleChange}
+                        disabled={!formData.productInterest}
+                        required
+                      >
+                        {!formData.productInterest ? (
+                          <option value="">Select commodity first to choose grade...</option>
+                        ) : (
+                          (COMMODITY_GRADES[formData.productInterest] || []).map((grade) => (
+                            <option key={grade} value={grade}>{grade}</option>
+                          ))
+                        )}
+                      </select>
+                      <div className="invalid-feedback">Please select a target quality grade.</div>
+                    </div>
+
+                    {/* Sample Weight / Evaluation Kit (Includes 250g micro-sample) */}
+                    <div className="col-md-6">
                       <label htmlFor="sampleWeight" className="form-label">
                         Sample Package Preference
                       </label>
@@ -448,10 +635,21 @@ export default function Contact() {
                         value={formData.sampleWeight}
                         onChange={handleChange}
                       >
-                        <option value="500g Standard Evaluation Kit">500g Standard Evaluation Kit (Single Variety with COA)</option>
-                        <option value="1kg Multi-Grade Comparison Box">1kg Multi-Grade Comparison Box (ABCD + Sound B + FAQ)</option>
-                        <option value="Complete 4-Spice Explorer Box">Complete 4-Spice Explorer Box (Nutmeg, Mace, Cloves, Cinnamon)</option>
-                        <option value="Commercial Container RFQ (No Sample Needed)">Commercial Container RFQ (Direct Price Quote, No Sample Needed)</option>
+                        <option value="250g Micro-Sample Kit (Laboratory & Sensory Analysis)">
+                          250g Micro-Sample Kit (Laboratory &amp; Sensory Analysis)
+                        </option>
+                        <option value="500g Standard Evaluation Kit (Single Variety with COA)">
+                          500g Standard Evaluation Kit (Single Variety with COA)
+                        </option>
+                        <option value="1kg Multi-Grade Comparison Box (Export Quality Check)">
+                          1kg Multi-Grade Comparison Box (Export Quality Check)
+                        </option>
+                        <option value="2kg Commercial Pilot Lot (Production Trial Batch)">
+                          2kg Commercial Pilot Lot (Production Trial Batch)
+                        </option>
+                        <option value="Commercial Container RFQ (No Sample Needed)">
+                          Commercial Container RFQ (Direct Price Quote, No Sample Needed)
+                        </option>
                       </select>
                     </div>
 
