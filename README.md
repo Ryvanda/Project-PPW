@@ -18,11 +18,6 @@ This repository (`Project-PPW`) unites two specialized React applications sharin
 Project-PPW/
 |-- README.md                       # Master technical documentation
 |-- .gitignore                      # Ignore node_modules, build dist, and cache
-|-- images/                         # Shared spice imagery and corporate photography (.webp)
-|-- favicon.svg                     # Vector brand favicon
-|-- favicon.png                     # Standard raster favicon
-|-- favicon-16x16.png               # Small favicon
-|-- favicon-512.png               # High-resolution application icon
 |
 |-- ryco-spices-react/              # Application 1: Main Public B2B Web App
 |   |-- src/
@@ -32,7 +27,7 @@ Project-PPW/
 |   |   |-- App.jsx                 # Client-side routing with react-router-dom
 |   |   |-- index.css               # Bootstrap 5.3 brand tokens and component styling
 |   |   `-- main.jsx                # Application root entry point
-|   |-- public/                     # Static assets & brand favicons
+|   |-- public/                     # Static assets, spice imagery (.webp) & brand favicons
 |   |-- screenshots/                # Verification screenshots
 |   |-- index.html                  # HTML entry point with typography preconnects
 |   |-- vite.config.js              # Vite configuration
@@ -41,12 +36,12 @@ Project-PPW/
 |
 `-- ryco-sample-portal/             # Application 2: Internal B2B Sample Tracking Portal
     |-- src/
-    |   |-- components/             # Header, StatsSummary, SampleForm, SampleList, SampleCard, EmptyState
+    |   |-- components/             # Header, StatsSummary, SampleForm, SampleList, SampleCard, SampleDetailModal, EmptyState
     |   |-- constants/              # Spices taxonomy, dependent grades, global countries
     |   |-- App.jsx                 # Stateful tracking tabs (Monitoring vs New Sample Form)
     |   |-- index.css               # Portal dashboard styles
     |   `-- main.jsx                # Portal entry point
-    |-- public/                     # Brand favicons
+    |-- public/                     # Brand favicons & SVG vector icons
     |-- screenshots/                # Verification screenshots
     |-- index.html                  # HTML entry point
     |-- vite.config.js              # Vite configuration

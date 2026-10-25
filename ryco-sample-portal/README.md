@@ -66,12 +66,13 @@ Tata letak aplikasi tidak lagi dipadatkan dalam 2 kolom sempit, melainkan dideco
 ryco-sample-portal/
 ├── src/
 │   ├── components/
-│   │   ├── EmptyState.jsx      # Helper render bersyarat antrean kosong
-│   │   ├── Header.jsx          # Header identitas Ryco Spices & live badge
-│   │   ├── SampleCard.jsx      # Kartu sampel dengan kotak alamat kurir & chips
-│   │   ├── SampleForm.jsx      # Controlled component dengan dependent dropdown & address
-│   │   ├── SampleList.jsx      # Grid responsif penuh dengan search & multi-filter
-│   │   └── StatsSummary.jsx    # Metrik agregat reaktif & total kg
+│   │   ├── EmptyState.jsx          # Helper render bersyarat antrean kosong
+│   │   ├── Header.jsx              # Header identitas Ryco Spices & live badge
+│   │   ├── SampleCard.jsx          # Kartu sampel dengan kotak alamat kurir & chips
+│   │   ├── SampleDetailModal.jsx   # Modal popup dialog rincian lengkap dossier sampel
+│   │   ├── SampleForm.jsx          # Controlled component dengan dependent dropdown & address
+│   │   ├── SampleList.jsx          # Grid responsif penuh dengan search & multi-filter
+│   │   └── StatsSummary.jsx        # Metrik agregat reaktif & total kg
 │   ├── constants/
 │   │   └── spices.js           # Taksonomi komoditas, grade dependen, dan daftar negara
 │   ├── App.jsx                 # State pusat, tabs router, seed data, dan handlers
