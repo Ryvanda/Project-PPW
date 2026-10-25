@@ -2,34 +2,27 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import ToastNotification from '../components/ToastNotification';
 
-// Spice Commodity Taxonomy & Dependent Quality Grades
+// Official 4 Core Spice Commodities & Dependent Quality Grades
 export const COMMODITY_GRADES = {
-  'Vanilla Beans': [
-    'Grade A (Gourmet / Black Premium)',
-    'Grade B (Extraction Grade)'
-  ],
-  'Nutmeg': [
+  'Indonesian Nutmeg Whole': [
     'Grade A (Premium Whole)',
     'Grade B (Standard Whole)',
     'Grade FAQ (Market Quality)'
   ],
-  'Cinnamon / Cassia': [
-    'Grade A (Vera Sticks)',
-    'Grade B (Standard Cuts)',
-    'Grade FAQ (Ground / Broken)'
+  'Mace (Bunga Pala)': [
+    'Grade A (Premium Whole Flower HP1)',
+    'Grade B (Standard Whole & Large Broken)',
+    'Grade FAQ (Broken / Distillation Grade)'
   ],
-  'Cloves': [
-    'Lalpari (Hand-Picked)',
-    'Zanzibar Grade A',
-    'Standard FAQ'
+  'Indonesian Cloves (Cengkeh)': [
+    'Grade A (Lalpari Hand-Picked)',
+    'Grade B (Standard Export FAQ)',
+    'Grade FAQ (Clove Stems & Distillation Flakes)'
   ],
-  'Fresh & Dried Ginger': [
-    'Grade A (Split Peeled)',
-    'Grade B (Whole Sun-Dried)'
-  ],
-  'Black & White Pepper': [
-    'Grade 1 (550-570 g/l High Density)',
-    'Grade FAQ (Cleaned)'
+  'Cinnamon / Cassia Vera': [
+    'Grade A (Cassia Vera AA Sticks)',
+    'Grade B (Standard Cuts & Splits)',
+    'Grade FAQ (Broken / Milling Kaastock)'
   ]
 };
 
